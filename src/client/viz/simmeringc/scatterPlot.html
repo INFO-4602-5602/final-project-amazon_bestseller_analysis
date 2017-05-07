@@ -2,7 +2,7 @@
 <html>
 <meta charset="utf-8">
 
-<h1 style="text-align:center;">Amazon Bestsellers - Sales vs. Reviews</h1>
+<h1 style="text-align:center;">Amazon Bestsellers - Sales vs. Reviews - Videogames omitted</h1>
 <div id="chart" align="center"></div>
 <h2 style="text-align:center;">Scroll over plots for more information, click to view products on Amazon</h2>
 
@@ -87,8 +87,8 @@ var tip = d3.tip()
     var productName = d["Product Name"].trunc(30);
 		return "<strong> Category:</strong> <span style='color:lightblue'>" + d.Category + "</span>" + "</br>"
       + "<strong>Product Name:</strong> <span style='color:lightblue'>" + productName + "</span>" + "</br>"
-			+ "<strong> Est. Revenue:</strong> <span style='color:lightblue'>" + "$" + d["Est. Revenue"] + "</span>" + "</br>"
-			+ "<strong> Est. Sales:</strong> <span style='color:lightblue'>" + "$" + d["Est. Sales"] + "</span>" + "</br>"
+			+ "<strong> Est. Revenue:</strong> <span style='color:lightblue'>" + d["Est. Revenue"] + "</span>" + "</br>"
+			+ "<strong> Est. Sales:</strong> <span style='color:lightblue'>" + d["Est. Sales"] + "</span>" + "</br>"
       + "<strong> Reviews:</strong> <span style='color:lightblue'>" + d["# of Reviews"] + "</span>" + "</br>"
 	})
 
