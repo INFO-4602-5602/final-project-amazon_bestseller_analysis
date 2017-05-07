@@ -4,7 +4,9 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 <body>
-	<h1>Amazon Bestsellers - Estimated Sales </h1>
+	<h1 style="text-align:center;">Amazon Bestsellers - Estimated Sales</h1>
+	<div id="chart" align="center"></div>
+	<h2 style="text-align:center;">Scroll over plots for more information and click to view products on Amazon</h2>
 </body>
 <style>
 
@@ -22,7 +24,7 @@ body {
 /* Changes color of bar from green to lightgreen when hovering over */
 .bar {
   fill: green;
-} 
+}
 .bar:hover {
   fill: lightgreen ;
 }
@@ -60,7 +62,7 @@ body {
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
 <script>
-	var margin = {top: 50, right: 20, bottom: 90, left: 80},
+	var margin = {top: 50, right: 20, bottom: 100, left: 80},
     width = 600 - margin.left - margin.right,
     height = 300 - margin.top - margin.bottom;
 
@@ -77,29 +79,35 @@ body {
     	.orient("left")
     	.ticks(10);
 
+	String.prototype.trunc = String.prototype.trunc ||
+	      function(n){
+	          return (this.length > n) ? this.substr(0, n-1) + '&hellip;' : this;
+	      };
+
     var tip = d3.tip()
   		.attr("class", "d3-tip")
   		.offset([-10, 0])
   		/* show all the relevant information on the tooltip (hover) */
   		.html(function(d) {
-    		return "<strong>Product Name:</strong> <span style='color:lightblue'>" + d.ProductName + "</span>" + "</br>"
+				var productName = d.ProductName.trunc(30);
+    		return "<strong>Product Name:</strong> <span style='color:lightblue'>" + productName + "</span>" + "</br>"
 					+ "<strong> Est. Revenue:</strong> <span style='color:lightblue'>" + "$" + d.Revenue + "</span>" + "</br>"
 					+ "<strong> Est. Sales:</strong> <span style='color:lightblue'>" + "$" + d.Sales + "</span>" + "</br>"
-					+ "<strong> Price:</strong> <span style='color:lightblue'>" + d.Price + "</span>" + "</br>"    
+					+ "<strong> Price:</strong> <span style='color:lightblue'>" + d.Price + "</span>" + "</br>"
 					+ "<strong> Category:</strong> <span style='color:lightblue'>" + d.Category + "</span>" + "</br>"
-					+ "<strong> Reviews:</strong> <span style='color:lightblue'>" + d.numReviews + "</span>" + "</br>"  
-					+ "<strong> Rating:</strong> <span style='color:lightblue'>" + d.Rating + "</span>" + "</br>"    
-  
+					+ "<strong> Reviews:</strong> <span style='color:lightblue'>" + d.numReviews + "</span>" + "</br>"
+					+ "<strong> Rating:</strong> <span style='color:lightblue'>" + d.Rating + "</span>" + "</br>"
+
   		})
 
-    var svg = d3.select("body").append("svg")
+    var svg = d3.select("#chart").append("svg")
     	.attr("width", width + margin.left + margin.right)
     	.attr("height", height + margin.top + margin.bottom)
   	  .append("g")
     	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     svg.call(tip);
-    
+
     // every chart gets a different color
     var color = d3.scale.ordinal().range(["pink", "lightblue", "lightgreen", "orange", "purple", "yellow", "magenta", "teal", "maroon"]);
 
@@ -115,11 +123,11 @@ body {
       // old y axis
       //y.domain([0, d3.max(data, function(d) { return d.Rating +.5; })]);
       y.domain([0, d3.max(data, function(d) { return d.Sales; })]);
-      
+
      svg.append("g")
       	.attr("class", "x axis")
       	.attr("transform", "translate(0," + height + ")")
-      	.call(xAxis) 
+      	.call(xAxis)
       .selectAll("text")
       	.style("text-anchor", "end")
       	.attr("dx", "-.8em")
@@ -139,12 +147,15 @@ body {
        	.attr("y", function(d) { return y(d.Sales); })
        	.attr("height", function(d) { return height - y(d.Sales); })
        	.on('mouseover', tip.show)
-       	.on('mouseout', tip.hide);
-
-     legend = svg.append("g")
-     	.attr("class", "legend")
-     	.attr("transform", "translate(50, 30)")
-     	.style("font-size", "12px")
-     	.call(d3.legend)
+       	.on('mouseout', tip.hide)
+				.on('click', function(d) {
+	        window.open(d.Link);
+	      });
+				//broken
+    //  legend = svg.append("g")
+    //  	.attr("class", "legend")
+    //  	.attr("transform", "translate(50, 30)")
+    //  	.style("font-size", "12px")
+    //  	.call(d3.legend)
     });
 </script>
