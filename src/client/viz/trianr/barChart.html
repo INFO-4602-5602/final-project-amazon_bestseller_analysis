@@ -88,17 +88,14 @@ body {
   		.attr("class", "d3-tip")
   		.offset([-10, 0])
   		/* show all the relevant information on the tooltip (hover) */
-  		.html(function(d) {
-				var productName = d.ProductName.trunc(30);
-    		return "<strong>Product Name:</strong> <span style='color:lightblue'>" + productName + "</span>" + "</br>"
+			.html(function(d) {
+		    var productName = d.ProductName.trunc(30);
+				return "<strong> Category:</strong> <span style='color:lightblue'>" + d.Category + "</span>" + "</br>"
+		      + "<strong>Product Name:</strong> <span style='color:lightblue'>" + productName + "</span>" + "</br>"
 					+ "<strong> Est. Revenue:</strong> <span style='color:lightblue'>" + "$" + d.Revenue + "</span>" + "</br>"
-					+ "<strong> Est. Sales:</strong> <span style='color:lightblue'>" + "$" + d.Sales + "</span>" + "</br>"
-					+ "<strong> Price:</strong> <span style='color:lightblue'>" + d.Price + "</span>" + "</br>"
-					+ "<strong> Category:</strong> <span style='color:lightblue'>" + d.Category + "</span>" + "</br>"
-					+ "<strong> Reviews:</strong> <span style='color:lightblue'>" + d.numReviews + "</span>" + "</br>"
-					+ "<strong> Rating:</strong> <span style='color:lightblue'>" + d.Rating + "</span>" + "</br>"
-
-  		})
+					+ "<strong> Est. Sales:</strong> <span style='color:lightblue'>" + d.Sales + "</span>" + "</br>"
+		      + "<strong> Reviews:</strong> <span style='color:lightblue'>" + d.numReviews + "</span>" + "</br>"
+			})
 
     var svg = d3.select("#chart").append("svg")
     	.attr("width", width + margin.left + margin.right)
