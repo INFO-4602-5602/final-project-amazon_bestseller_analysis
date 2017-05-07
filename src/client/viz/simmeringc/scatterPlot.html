@@ -4,10 +4,11 @@
 
 <h1 style="text-align:center;">Amazon Bestsellers - Sales vs. Reviews</h1>
 <div id="chart" align="center"></div>
+<h2 style="text-align:center;">Scroll over plots for more information and click to view products on Amazon</h2>
 
 <style>
 body {
-  font: 11px sans-serif;
+  font: 12px sans-serif;
 }
 
 
@@ -22,15 +23,35 @@ body {
   stroke: #000;
 }
 
-.tooltip {
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
   position: absolute;
-  width: 200px;
-  height: 70px;
-  pointer-events: none;
+  text-align: center;
+}
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
 }
 </style>
 <body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
 
 <script>
 var margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -53,12 +74,33 @@ var yValue = function(d) { return d["# of Reviews"];}, // data -> value
 var cValue = function(d) { return d.Category;},
     color = d3.scale.category10();
 
+String.prototype.trunc = String.prototype.trunc ||
+      function(n){
+          return (this.length > n) ? this.substr(0, n-1) + '&hellip;' : this;
+      };
+
+var tip = d3.tip()
+	.attr("class", "d3-tip")
+	.offset([-10, 0])
+	/* show all the relevant information on the tooltip (hover) */
+	.html(function(d) {
+    var productName = d["Product Name"].trunc(30);
+		return "<strong> Category:</strong> <span style='color:lightblue'>" + d.Category + "</span>" + "</br>"
+      + "<strong>Product Name:</strong> <span style='color:lightblue'>" + productName + "</span>" + "</br>"
+			+ "<strong> Est. Revenue:</strong> <span style='color:lightblue'>" + "$" + d["Est. Revenue"] + "</span>" + "</br>"
+			+ "<strong> Est. Sales:</strong> <span style='color:lightblue'>" + "$" + d["Est. Sales"] + "</span>" + "</br>"
+      + "<strong> Reviews:</strong> <span style='color:lightblue'>" + d["# of Reviews"] + "</span>" + "</br>"
+	})
+
+
 // add the graph canvas to the body of the webpage
 var svg = d3.select("#chart").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.call(tip);
 
 // add the tooltip area to the webpage
 var tooltip = d3.select("body").append("div")
@@ -111,18 +153,10 @@ d3.csv("combinedList.csv", function(error, data) {
       .attr("cx", xMap)
       .attr("cy", yMap)
       .style("fill", function(d) { return color(cValue(d));})
-      .on("mouseover", function(d) {
-          tooltip.transition()
-               .duration(200)
-               .style("opacity", 1);
-          tooltip.html("Category: " + d.Category + "<br/>" + d["Product Name"] + "<br/>" + "Est. Revenue : " + d["Est. Revenue"] + "<br/>" + "Est. Sales: " + d["Est. Sales"] + "<br/>" + "# of Reviews: " + d["# of Reviews"] + "<br/>" + "Sales per review: " + d["Est. Sales"] / d["# of Reviews"])
-               .style("left", (d3.event.pageX + 5) + "px")
-               .style("top", (d3.event.pageY + 40) + "px");
-      })
-      .on("mouseout", function(d) {
-          tooltip.transition()
-               .duration(500)
-               .style("opacity", 0);
+      .on('mouseover', tip.show)
+      .on('mouseout', tip.hide)
+      .on('click', function(d) {
+        window.open(d.Link);
       });
 
   // draw legend
