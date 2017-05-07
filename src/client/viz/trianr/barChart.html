@@ -62,7 +62,7 @@ body {
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
 <script>
-	var margin = {top: 50, right: 20, bottom: 90, left: 80},
+	var margin = {top: 50, right: 20, bottom: 100, left: 80},
     width = 600 - margin.left - margin.right,
     height = 300 - margin.top - margin.bottom;
 
@@ -151,11 +151,11 @@ body {
 				.on('click', function(d) {
 	        window.open(d.Link);
 	      });
-
-     legend = svg.append("g")
-     	.attr("class", "legend")
-     	.attr("transform", "translate(50, 30)")
-     	.style("font-size", "12px")
-     	.call(d3.legend)
+				//broken
+    //  legend = svg.append("g")
+    //  	.attr("class", "legend")
+    //  	.attr("transform", "translate(50, 30)")
+    //  	.style("font-size", "12px")
+    //  	.call(d3.legend)
     });
 </script>
