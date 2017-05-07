@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body>
+	<h1>Amazon Bestsellers - Estimated Sales </h1>
+</body>
+<style>
+
+body {
+  font: 12px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+/* Changes color of bar from green to lightgreen when hovering over */
+.bar {
+  fill: green;
+} 
+.bar:hover {
+  fill: lightgreen ;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+</style>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<script>
+	var margin = {top: 50, right: 20, bottom: 90, left: 80},
+    width = 600 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+    var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+
+	var y = d3.scale.linear().range([height, 0]);
+
+	var xAxis = d3.svg.axis()
+    	.scale(x)
+    	.orient("bottom");
+
+	var yAxis = d3.svg.axis()
+    	.scale(y)
+    	.orient("left")
+    	.ticks(10);
+
+    var tip = d3.tip()
+  		.attr("class", "d3-tip")
+  		.offset([-10, 0])
+  		/* show all the relevant information on the tooltip (hover) */
+  		.html(function(d) {
+    		return "<strong>Product Name:</strong> <span style='color:lightblue'>" + d.ProductName + "</span>" + "</br>"
+					+ "<strong> Est. Revenue:</strong> <span style='color:lightblue'>" + "$" + d.Revenue + "</span>" + "</br>"
+					+ "<strong> Est. Sales:</strong> <span style='color:lightblue'>" + "$" + d.Sales + "</span>" + "</br>"
+					+ "<strong> Price:</strong> <span style='color:lightblue'>" + d.Price + "</span>" + "</br>"    
+					+ "<strong> Category:</strong> <span style='color:lightblue'>" + d.Category + "</span>" + "</br>"
+					+ "<strong> Reviews:</strong> <span style='color:lightblue'>" + d.numReviews + "</span>" + "</br>"  
+					+ "<strong> Rating:</strong> <span style='color:lightblue'>" + d.Rating + "</span>" + "</br>"    
+  
+  		})
+
+    var svg = d3.select("body").append("svg")
+    	.attr("width", width + margin.left + margin.right)
+    	.attr("height", height + margin.top + margin.bottom)
+  	  .append("g")
+    	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.call(tip);
+    
+    // every chart gets a different color
+    var color = d3.scale.ordinal().range(["pink", "lightblue", "lightgreen", "orange", "purple", "yellow", "magenta", "teal", "maroon"]);
+
+	// all usable nums now
+    d3.csv("dataCleanup.csv", function(error, data) {
+    	data.forEach(function(d) {
+    		d.Rating = +d.Rating;
+    		d.Revenue = +d.Revenue;
+    		d.Sales = +d.Sales;
+    		d.numReviews = +d.numReviews;
+    	});
+      x.domain(data.map(function(d) { return d.Category; }));
+      // old y axis
+      //y.domain([0, d3.max(data, function(d) { return d.Rating +.5; })]);
+      y.domain([0, d3.max(data, function(d) { return d.Sales; })]);
+      
+     svg.append("g")
+      	.attr("class", "x axis")
+      	.attr("transform", "translate(0," + height + ")")
+      	.call(xAxis) 
+      .selectAll("text")
+      	.style("text-anchor", "end")
+      	.attr("dx", "-.8em")
+      	.attr("dy", "-.55em")
+      	.attr("transform", "rotate(-90)" );
+     svg.append("g")
+      	.attr("class", "y axis")
+      	.call(yAxis);
+     svg.selectAll("bar")
+     	.data(data)
+       .enter().append("rect")
+        //.attr("class", "bar")
+        // assign colors to the bars
+        .style("fill", function(d, i) { return color(i)})
+       	.attr("x", function(d) { return x(d.Category); })
+       	.attr("width", x.rangeBand())
+       	.attr("y", function(d) { return y(d.Sales); })
+       	.attr("height", function(d) { return height - y(d.Sales); })
+       	.on('mouseover', tip.show)
+       	.on('mouseout', tip.hide);
+
+     legend = svg.append("g")
+     	.attr("class", "legend")
+     	.attr("transform", "translate(50, 30)")
+     	.style("font-size", "12px")
+     	.call(d3.legend)
+    });
+</script>
