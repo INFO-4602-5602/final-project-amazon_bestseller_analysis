@@ -1,0 +1,21 @@
+div.tooltip {
+ 	position: absolute;
+	text-align: center;
+	width: 100px;
+	height: 60px;
+	padding: 2px;
+  font-family: 'Titillium Web', sans-serif;
+	font-size: 12px;
+	background: white;
+	border: 0px;
+	border-radius: 8px;
+	pointer-events: none;
+}
+
+path:hover {
+	fill-opacity: .7;
+}
+
+body {
+  font-family: 'Titillium Web', sans-serif;
+}
